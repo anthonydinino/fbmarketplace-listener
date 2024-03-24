@@ -3,7 +3,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 
 def format_discounted(listing):
-  print(f"{listing=}")
   if "$" in listing[1]:
     listing.pop(1)
   return listing
