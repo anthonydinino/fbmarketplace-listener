@@ -11,6 +11,7 @@ def scrape(query, headless=True):
   browser = get_browser(headless)
   browser.get(f"https://www.facebook.com/marketplace/adelaide/search?sortBy=creation_time_descend&query={query}&exact=false")
   content = []
+  print("about to fetch data")
   while not content:
     try: 
       content = browser.find_elements(By.CSS_SELECTOR, "div[style='max-width: 381px; min-width: 242px;']")
