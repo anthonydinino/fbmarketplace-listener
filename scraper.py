@@ -20,7 +20,7 @@ def scrape(query, headless=True):
   return list(map(format_discounted, content))
 
 def get_browser(headless):
-  if os.environ["REMOTE_DRIVER"]:
+  if os.environ.get("REMOTE_DRIVER", ""):
     server = os.environ["REMOTE_DRIVER"]
   else:
     server = "http://browser:4444"
