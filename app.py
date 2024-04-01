@@ -16,8 +16,4 @@ def data():
   query = request.args.get('query')
   return scrape(query)
 
-@app.route("/test")
-def test():
-  return "test working"
-
 
