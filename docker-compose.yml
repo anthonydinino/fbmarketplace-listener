@@ -7,9 +7,5 @@ services:
     volumes:
       - ./:/usr/src/app
     command: ["gunicorn", "app:app", "-b", "0.0.0.0:8000"]
-  browser:
-    image: selenium/standalone-firefox:latest
-    shm_size: "2gb"
-    ports:
-      - "4444:4444"
-      - "7900:7900"
+    environment:
+      - REMOTE_DRIVER=https://standalone-firefox-latest.onrender.com:4444

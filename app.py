@@ -7,7 +7,7 @@ app = Flask(__name__)
 def data_front():
   query = request.args.get('query')
   if not query:
-    return "please specify query parameter ?query="
+    return "please specify query param"
   content = scrape(query)
   return render_template("scrape.html", content=content)
 

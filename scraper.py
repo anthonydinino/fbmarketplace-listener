@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+import os
 
 def format_discounted(listing: list[str]):
   if "$" in listing[1]:
@@ -19,8 +20,12 @@ def scrape(query, headless=True):
   return list(map(format_discounted, content))
 
 def get_browser(headless):
+  if os.environ["REMOTE_DRIVER"]:
+    server = os.environ["REMOTE_DRIVER"]
+  else:
+    server = "http://browser:4444"
   options = webdriver.FirefoxOptions()
   if headless:
     options.add_argument("--headless")
-  return webdriver.Remote(options=options, command_executor="http://browser:4444")
+  return webdriver.Remote(options=options, command_executor=server)
 
