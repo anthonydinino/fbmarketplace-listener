@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 from scraper import scrape
+import os
 
 app = Flask(__name__)
 
@@ -7,7 +8,7 @@ app = Flask(__name__)
 def data_front():
   query = request.args.get('query')
   if not query:
-    return "please specify query param"
+    return os.environ.get("REMOTE_DRIVER", False)
   content = scrape(query)
   return render_template("scrape.html", content=content)
 
