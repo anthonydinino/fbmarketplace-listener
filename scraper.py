@@ -3,7 +3,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import os
-import json
 
 def format_discounted(listing: list[str]):
   if "$" in listing[1]:
@@ -15,12 +14,12 @@ def scrape(query):
   browser.get(f"https://www.facebook.com/marketplace/adelaide/search?sortBy=creation_time_descend&query={query}&exact=false")
   content = []
   try:
-    WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='Collection of Marketplace items']")))
+    WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='Collection of Marketplace items']")))
     content = browser.find_elements(By.CSS_SELECTOR, "div[style='max-width: 381px; min-width: 242px;']")
     content = [c.text.split('\n') for c in list(filter(lambda c: bool(c.text), content))]
     return list(map(format_discounted, content))
   finally:
-    browser.close()
+    browser.quit()
   
 
 def get_browser(headless=False):
