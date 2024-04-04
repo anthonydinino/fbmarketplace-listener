@@ -8,7 +8,7 @@ app = Flask(__name__)
 def data_front():
   query = request.args.get('query')
   if not query:
-    return os.environ.get("REMOTE_DRIVER", False)
+    return os.environ.get("REMOTE_DRIVER", "no remote server")
   content = scrape(query)
   return render_template("scrape.html", content=content)
 

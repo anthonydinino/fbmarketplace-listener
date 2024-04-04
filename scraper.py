@@ -19,8 +19,8 @@ def scrape(query):
     content = browser.find_elements(By.CSS_SELECTOR, "div[style='max-width: 381px; min-width: 242px;']")
     content = [c.text.split('\n') for c in list(filter(lambda c: bool(c.text), content))]
     return list(map(format_discounted, content))
-  except:
-    print()
+  finally:
+    browser.close()
   
 
 def get_browser(headless=False):
