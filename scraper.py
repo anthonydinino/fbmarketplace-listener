@@ -12,15 +12,17 @@ def format_discounted(listing: list[str]):
 def scrape(query):
   browser = get_browser()
   browser.get(f"https://www.facebook.com/marketplace/adelaide/search?sortBy=creation_time_descend&query={query}&exact=false")
-  content = []
   try:
-    WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='Collection of Marketplace items']")))
-    content = browser.find_elements(By.CSS_SELECTOR, "div[style='max-width: 381px; min-width: 242px;']")
-    content = [c.text.split('\n') for c in list(filter(lambda c: bool(c.text), content))]
-    return list(map(format_discounted, content))
+    content = get_listing_links(browser)
+    for link in content:
+      print(f"https://www.facebook.com{link}", flush=True)
   finally:
     browser.quit()
-  
+
+def get_listing_links(browser):
+    WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='Collection of Marketplace items']")))
+    content = browser.find_elements(By.CSS_SELECTOR, "a[href^='/marketplace/item'")
+    return [c.get_dom_attribute('href') for c in content]
 
 def get_browser(headless=False):
   if os.environ.get("REMOTE_DRIVER", False):
