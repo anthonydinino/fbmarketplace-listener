@@ -8,11 +8,15 @@ Allows you to scrape the Facebook Marketplace.
 docker compose up -d
 ```
 
-### Make a query
+## Make a query
 
 http://localhost:8000/?query=car
 
-### Optional arguments
+## Visit the selenium hub
+
+http://localhost:4444/ui/#
+
+## Optional arguments
 
 - Use concurrency! Get a detailed scrape!
 
@@ -28,10 +32,6 @@ http://localhost:8000/?query=car
 &location=sydney
 ```
 
-### Visit the selenium hub
-
-http://localhost:4444/ui/#
-
-### Issues
+## Issues
 
 - Detailed column sometimes not scraping properly due to item pages being different. Need to use better XPath
