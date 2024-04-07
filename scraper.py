@@ -2,33 +2,82 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import os
+import concurrent.futures
 
-def format_discounted(listing: list[str]):
-  if "$" in listing[1]:
-    listing.pop(1)
-  return listing
+BASE_URL = "https://www.facebook.com/marketplace"
 
-def scrape(query):
-  browser = get_browser()
-  browser.get(f"https://www.facebook.com/marketplace/adelaide/search?sortBy=creation_time_descend&query={query}&exact=false")
-  content = []
+def quick_scrape(query, location):
+  return get_listings_info(f"{BASE_URL}/{location}/search?sortBy=creation_time_descend&query={query}&exact=false")
+
+def detailed_scrape(query, location):
+  # get listing page info
+  listing_info = get_listings_info(f"{BASE_URL}/{location}/search?sortBy=creation_time_descend&query={query}&exact=false")
+
+  # navigate to all listings and scrape details
+  listing_links = [f"{BASE_URL}/item/{listing["id"]}" for listing in listing_info]
+  with concurrent.futures.ThreadPoolExecutor() as executor:
+    results = list(executor.map(get_listing_detail, listing_links))
+
+  # add listing info to the listing detail
+  assert len(listing_links) == len(results)
+  for i in range(len(results)):
+    results[i]['image'] = listing_info[i]['image']
+    results[i]['price'] = listing_info[i]['price']
+    results[i]['link'] = listing_links[i]
+
+  return results
+
+def get_listing_detail(url):
+  browser = get_browser(headless=False)
+  browser.get(url)
+  WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.XPATH, "//h1/span")))
+  title = browser.find_element(By.XPATH, "//h1/span").text
   try:
-    WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='Collection of Marketplace items']")))
-    content = browser.find_elements(By.CSS_SELECTOR, "div[style='max-width: 381px; min-width: 242px;']")
-    content = [c.text.split('\n') for c in list(filter(lambda c: bool(c.text), content))]
-    return list(map(format_discounted, content))
-  finally:
-    browser.quit()
-  
+    see_more = browser.find_element(By.XPATH, "//div[@aria-label='Collection of Marketplace items']//*[text()[contains(., 'See more')]]")
+    browser.find_element(By.XPATH, "//div[@aria-label='Close']").click()
+    see_more.click()
+  except:
+    pass
+  try:
+    listed = browser.find_element(By.XPATH, "//span[text()[contains(.,'Listed')]]").text
+  except:
+    listed = ""
+  try:
+    details = browser.find_element(By.XPATH, "/html/body/div[1]/div/div[1]/div/div[3]/div/div/div[1]/div[1]/div[2]/div/div/div/div/div/div[1]/div[2]/div/div[2]/div/div[1]/div[1]/div/div[5]").text
+  except:
+    details = ""
+  browser.quit()
+  return {
+    "title": title,
+    "listed": listed,
+    "details": details
+  }
 
-def get_browser(headless=False):
-  if os.environ.get("REMOTE_DRIVER", False):
-    server = os.environ["REMOTE_DRIVER"]
-  else:
-    server = "http://browser:4444"
+def get_listings_info(url):
+  currency_code = "$"
+  browser = get_browser()
+  browser.get(url)
+  WebDriverWait(browser, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div[aria-label='Collection of Marketplace items']")))
+  ids = browser.find_elements(By.XPATH, "//a[starts-with(@href, '/marketplace/item')]")
+  images = browser.find_elements(By.XPATH, "//a[starts-with(@href, '/marketplace/item')]//img")
+  titles = browser.find_elements(By.XPATH, "//a[starts-with(@href, '/marketplace/item')]//span[contains(@style, '-webkit')]")
+  prices = browser.find_elements(By.XPATH, f"//a[starts-with(@href, '/marketplace/item')]/div/div[2]/div/span/div/span[text()[contains(. , '{currency_code}') or contains(.,'Free')]]")
+  assert len(ids) == len(images) == len(titles) == len(prices)
+  res = []
+  for i, id in enumerate(ids):
+    res.append({
+      "id": id.get_dom_attribute("href").split("/")[3],
+      "link" : f"{BASE_URL}{id}",
+      "title" : titles[i].text,
+      "price" : prices[i].text,
+      "image" : images[i].get_attribute("src")
+    })
+  browser.quit()
+  return res
+
+def get_browser(headless=True):
+  server = "http://selenium-hub:4444"
   options = webdriver.ChromeOptions()
-  options.set_capability('goog:loggingPrefs', {'performance': 'ALL'})
   if headless:
     options.add_argument("--headless")
   return webdriver.Remote(options=options, command_executor=server)

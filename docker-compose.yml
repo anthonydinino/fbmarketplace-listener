@@ -7,5 +7,20 @@ services:
     volumes:
       - ./:/usr/src/app
     command: ["gunicorn", "app:app", "-b", "0.0.0.0:8000"]
+  chrome:
+    image: selenium/node-chrome:4.19.1-20240402
+    shm_size: 2gb
+    depends_on:
+      - selenium-hub
     environment:
-      - REMOTE_DRIVER=https://standalone-firefox-latest.onrender.com:4444
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=12
+  selenium-hub:
+    image: selenium/hub:4.19.1-20240402
+    container_name: selenium-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
