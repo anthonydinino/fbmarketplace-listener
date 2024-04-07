@@ -5,21 +5,33 @@ Allows you to scrape the Facebook Marketplace.
 ## Get Started
 
 ```
-docker compose -f docker-compose.dev.yml up -d
+docker compose up -d
 ```
 
 ### Make a query
 
 http://localhost:8000/?query=car
 
-### Get an API response instead
+### Optional arguments
 
-http://localhost:8000/api?query=car
+- Use concurrency! Get a detailed scrape!
 
-### See what the browser sees
+```
+&detailed=1
+```
 
-http://localhost:7900/?autoconnect=1&resize=scale&password=secret
+
+- Add a location like `sydney` or `melbourne`!
+
+
+```
+&location=sydney
+```
+
+### Visit the selenium hub
+
+http://localhost:4444/ui/#
 
 ### Issues
 
-- `docker compose up` **_not working due to remote server not working._** Facebook is most likely detecting that the remote server is not human and prompting user to login disrupting the scraper
+- Detailed column sometimes not scraping properly due to item pages being different. Need to use better XPath
