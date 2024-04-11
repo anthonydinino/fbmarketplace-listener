@@ -65,9 +65,10 @@ def get_listings_info(url):
   assert len(ids) == len(images) == len(titles) == len(prices)
   res = []
   for i, id in enumerate(ids):
+    id = id.get_dom_attribute("href").split('/')[3]
     res.append({
-      "id": id.get_dom_attribute("href").split("/")[3],
-      "link" : f"{BASE_URL}{id}",
+      "id": id,
+      "link" : f"{BASE_URL}/item/{id}",
       "title" : titles[i].text,
       "price" : prices[i].text,
       "image" : images[i].get_attribute("src")
