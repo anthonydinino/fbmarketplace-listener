@@ -1,0 +1,23 @@
+import { useState } from "react";
+import ListenerForm from "./ListenerForm";
+import ListingsView from "./ListingsView";
+
+function App() {
+  const [listening, setListening] = useState(false);
+  const [requestData, setRequestData] = useState(null);
+
+  return (
+    <>
+      {listening ? (
+        <ListingsView requestData={requestData} />
+      ) : (
+        <ListenerForm
+          setListening={setListening}
+          setRequestData={setRequestData}
+        />
+      )}
+    </>
+  );
+}
+
+export default App;
