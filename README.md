@@ -35,3 +35,8 @@ http://localhost:4444/ui/#
 ## Issues
 
 - Detailed column sometimes not scraping properly due to item pages being different. Need to use better XPath
+
+## Todo
+
+- Polish UI
+- Add production build
