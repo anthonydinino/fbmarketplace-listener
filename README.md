@@ -1,6 +1,6 @@
-# FB Marketplace Scraper
+# FB Marketplace Listener
 
-Allows you to scrape the Facebook Marketplace.
+Periodically refreshes Facebook marketplace and notifies you when there's a new listing!
 
 ## Get Started
 
