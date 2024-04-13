@@ -7,16 +7,18 @@ Allows you to scrape the Facebook Marketplace.
 ```
 docker compose up -d
 ```
+## Interact with Web App
 
-## Make a query
+http://localhost:8080/
+
+## API Instructions (optional)
+### Make a query
 
 http://localhost:8000/?query=car
 
-## Visit the selenium hub
 
-http://localhost:4444/ui/#
 
-## Optional arguments
+### Optional arguments
 
 - Use concurrency! Get a detailed scrape!
 
@@ -31,6 +33,10 @@ http://localhost:4444/ui/#
 ```
 &location=sydney
 ```
+
+### Visit the selenium hub
+
+http://localhost:4444/ui/#
 
 ## Issues
 
