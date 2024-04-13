@@ -23,7 +23,7 @@ def data_api():
   location = request.args.get('location') if request.args.get('location') else "adelaide"
   detailed = request.args.get('detailed') if request.args.get('detailed') else False
   if not query:
-    return "USAGE: localhost:8000?query=[query]&location=[location]&detailed=[1|0]"
+    return "API USAGE: localhost:8000/api?query=[query]&location=[location]&detailed=[1|0]"
   if detailed:
     return detailed_scrape(query, location)
   else:
