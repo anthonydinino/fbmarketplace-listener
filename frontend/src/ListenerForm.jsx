@@ -1,11 +1,19 @@
 import Input from "./Input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "./Layout";
 
-const ListenerForm = ({ setListening, setRequestData }) => {
+const ListenerForm = ({ setListening, setRequestData, requestData }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [location, setLocation] = useState("");
   const [refreshRate, setRefreshRate] = useState("");
+
+  useEffect(() => {
+    if (requestData) {
+      setSearchTerm(requestData["searchTerm"] || "");
+      setLocation(requestData["location"] || "");
+      setRefreshRate(requestData["refreshRate"] || "");
+    }
+  }, [requestData]);
 
   const prepareRequest = (e) => {
     e.preventDefault();
@@ -33,8 +41,9 @@ const ListenerForm = ({ setListening, setRequestData }) => {
         />
         <Input
           required={true}
+          label="Every ? minutes"
           fieldName="refresh-rate"
-          placeholder={"refresh rate (seconds)"}
+          placeholder={"refresh rate (minutes)"}
           state={refreshRate}
           setState={setRefreshRate}
         />

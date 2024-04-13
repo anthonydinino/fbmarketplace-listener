@@ -1,9 +1,16 @@
-const Input = ({ fieldName, placeholder, required, state, setState }) => {
+const Input = ({
+  fieldName,
+  placeholder,
+  label,
+  required,
+  state,
+  setState,
+}) => {
   const fieldNameText =
-    fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace("-", " ");
+    fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replaceAll("-", " ");
   return (
     <div>
-      <label htmlFor={fieldName}>{fieldNameText}</label>
+      <label htmlFor={fieldName}>{label || fieldNameText}</label>
       <input
         required={required ?? false}
         id={fieldName}
