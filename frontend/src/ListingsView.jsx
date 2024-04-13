@@ -1,14 +1,20 @@
+import { useEffect } from "react";
 import Layout from "./Layout";
 import axios from "axios";
 
-const ListingsView = ({ requestData }) => {
-  const fetchData = async () => {
-    const data = await axios.get(
-      `https://localhost:8000/api?query=${requestData["searchTerm"]}`
-    );
-    console.log(data);
-  };
-  fetchData();
+const ListingsView = ({ requestData, setListening }) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get(
+        `/api?query=${requestData["searchTerm"]}`
+      );
+      console.log(response.data);
+    };
+    fetchData();
+  }, [requestData]);
+
+  Notification.requestPermission();
+
   return (
     <>
       <Layout>
@@ -22,6 +28,12 @@ const ListingsView = ({ requestData }) => {
             ))}
           </tbody>
         </table>
+        <button
+          onClick={() => setListening(false)}
+          className="w-full rounded-md p-3 text-white border-none bg-red-500 hover:bg-red-700 w-100"
+        >
+          Stop
+        </button>
       </Layout>
     </>
   );

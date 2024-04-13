@@ -1,7 +1,7 @@
 const Layout = ({ children }) => {
   return (
     <div className="h-screen flex flex-col justify-center items-center">
-      {children}
+      <div className="lg:w-1/2 w-96">{children}</div>
     </div>
   );
 };

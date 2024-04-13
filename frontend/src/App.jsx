@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       {listening ? (
-        <ListingsView requestData={requestData} />
+        <ListingsView requestData={requestData} setListening={setListening} />
       ) : (
         <ListenerForm
           setListening={setListening}

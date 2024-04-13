@@ -7,7 +7,8 @@ const ListenerForm = ({ setListening, setRequestData }) => {
   const [location, setLocation] = useState("");
   const [refreshRate, setRefreshRate] = useState("");
 
-  const prepareRequest = () => {
+  const prepareRequest = (e) => {
+    e.preventDefault();
     setRequestData({
       searchTerm,
       location,
@@ -18,25 +19,32 @@ const ListenerForm = ({ setListening, setRequestData }) => {
 
   return (
     <Layout>
-      <fieldset className="md:w-1/2">
+      <form onSubmit={(e) => prepareRequest(e)}>
         <Input
           fieldName="search-term"
           state={searchTerm}
           setState={setSearchTerm}
         />
-        <Input fieldName="location" state={location} setState={setLocation} />
         <Input
+          required={true}
+          fieldName="location"
+          state={location}
+          setState={setLocation}
+        />
+        <Input
+          required={true}
           fieldName="refresh-rate"
+          placeholder={"refresh rate (seconds)"}
           state={refreshRate}
           setState={setRefreshRate}
         />
         <button
-          onClick={() => prepareRequest()}
+          type="submit"
           className="w-full rounded-md p-3 text-white border-none bg-blue-500 hover:bg-blue-700 w-100"
         >
           Listen
         </button>
-      </fieldset>
+      </form>
     </Layout>
   );
 };
