@@ -7,8 +7,6 @@ import concurrent.futures
 BASE_URL = "https://www.facebook.com/marketplace"
 
 def quick_scrape(query, location):
-  
-
   return get_listings_info(f"{BASE_URL}/{location}/search?sortBy=creation_time_descend&maxPrice=2000&daysSinceListed=1&query={query}&exact=false")
 
 def detailed_scrape(query, location):
