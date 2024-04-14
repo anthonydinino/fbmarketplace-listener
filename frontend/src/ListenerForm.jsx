@@ -26,9 +26,13 @@ const ListenerForm = ({ setListening, setRequestData, requestData }) => {
   };
 
   return (
-    <Layout>
+    <Layout extra="h-screen justify-center">
+      <h1 className="text-5xl text-center mb-10">
+        Facebook Marketplace Listener
+      </h1>
       <form onSubmit={(e) => prepareRequest(e)}>
         <Input
+          required={true}
           fieldName="search-term"
           state={searchTerm}
           setState={setSearchTerm}

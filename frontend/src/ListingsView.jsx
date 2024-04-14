@@ -2,17 +2,32 @@ import { useEffect, useState } from "react";
 import Layout from "./Layout";
 import axios from "axios";
 import moment from "moment";
+import Spinner from "./Spinner";
 
 const ListingsView = ({ requestData, setListening }) => {
   const [listings, setListings] = useState([]);
   const [trackedIds, setTrackedIds] = useState([]);
+  const [checking, setChecking] = useState(false);
   const tdStyles = "text-center";
 
   useEffect(() => {
-    const fetchListingsInterval = setInterval(async () => {
+    const queryListings = async () => {
       const response = await axios.get(
         `/api?query=${requestData["searchTerm"]}&location=${requestData["location"]}`
       );
+      setListings(response.data ?? []);
+    };
+    queryListings();
+    Notification.requestPermission();
+  }, []);
+
+  useEffect(() => {
+    const fetchListingsInterval = setInterval(async () => {
+      setChecking(true);
+      const response = await axios.get(
+        `/api?query=${requestData["searchTerm"]}&location=${requestData["location"]}`
+      );
+      setChecking(false);
       setListings(response.data ?? []);
     }, parseInt(parseFloat(requestData["refreshRate"]) * 60000));
     return () => clearInterval(fetchListingsInterval);
@@ -37,17 +52,18 @@ const ListingsView = ({ requestData, setListening }) => {
   return (
     <>
       <Layout>
-        <div className="flex justify-around mb-8">
+        <div className="flex justify-between items-center mb-8 p-8">
           <table className="table-auto border-solid border-2">
             <tbody>
               {Object.keys(requestData).map((key) => (
-                <tr className="border-2" key={key}>
-                  <th className="border-2 p-2 pr-5 text-left">{key}</th>
+                <tr key={key}>
+                  <th className="p-2 pr-5 text-left">{key}</th>
                   <td className="p-2">{requestData[key]}</td>
                 </tr>
               ))}
             </tbody>
           </table>
+          {checking && <Spinner />}
           <button
             onClick={() => setListening(false)}
             className="rounded-md p-3 text-white border-none bg-red-500 hover:bg-red-700 w-100"

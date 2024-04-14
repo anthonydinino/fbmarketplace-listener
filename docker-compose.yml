@@ -1,9 +1,24 @@
 services:
+  nginx:
+    image: nginx:1.20.1
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:80
+    container_name: fbmarket-proxy
+    depends_on:
+      - app
+      - server
+  app:
+    container_name: fbmarket-app
+    build: ./frontend
+    volumes:
+      - ./frontend:/usr/src/app
   server:
-    container_name: python-scraper
+    container_name: fbmarket-server
     build: .
     ports:
-      - "8000:8000"
+      - 8000:8000
     volumes:
       - ./:/usr/src/app
     command: ["gunicorn", "app:app", "-b", "0.0.0.0:8000"]

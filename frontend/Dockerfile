@@ -1,17 +1,13 @@
-FROM node
+FROM node as build-stage
 
 WORKDIR /usr/src/app
 
 COPY . .
 
-RUN npm install
+RUN npm ci
 
-CMD ["npm", "run", "dev", "--", "--host"]
+RUN npm run build
 
-# RUN npm ci
+FROM nginx:1.25-alpine
 
-# RUN npm run build
-
-# FROM nginx:1.25-alpine
-
-# COPY --from=build-stage /usr/src/app/dist /usr/share/nginx/html
+COPY --from=build-stage /usr/src/app/dist /usr/share/nginx/html

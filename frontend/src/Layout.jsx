@@ -1,7 +1,7 @@
-const Layout = ({ children }) => {
+const Layout = ({ children, extra }) => {
   return (
-    <div className="h-screen flex flex-col items-center">
-      <div className="lg:w-1/2 w-96">{children}</div>
+    <div className={`flex flex-col items-center ${extra}`}>
+      <div className="w-11/12 md:w-1/2 lg:w-2/3 xl:w-1/2">{children}</div>
     </div>
   );
 };
