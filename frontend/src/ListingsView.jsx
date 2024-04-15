@@ -2,35 +2,52 @@ import { useEffect, useState } from "react";
 import Layout from "./Layout";
 import axios from "axios";
 import moment from "moment";
-import Spinner from "./Spinner";
 
 const ListingsView = ({ requestData, setListening }) => {
   const [listings, setListings] = useState([]);
   const [trackedIds, setTrackedIds] = useState([]);
   const [checking, setChecking] = useState(false);
-  const tdStyles = "text-center";
+  const [countdown, setCountdown] = useState(1);
+
+  const refreshSeconds = parseInt(parseFloat(requestData["refreshRate"]) * 60);
 
   useEffect(() => {
     const queryListings = async () => {
+      setChecking(true);
       const response = await axios.get(
         `/api?query=${requestData["searchTerm"]}&location=${requestData["location"]}`
       );
       setListings(response.data ?? []);
+      setChecking(false);
     };
     queryListings();
     Notification.requestPermission();
   }, []);
 
   useEffect(() => {
-    const fetchListingsInterval = setInterval(async () => {
+    if (checking === false) {
+      setCountdown(refreshSeconds);
+    }
+  }, [checking, refreshSeconds]);
+
+  useEffect(() => {
+    const seconds = setTimeout(() => {
+      document.documentElement.style.setProperty("--value", countdown - 1);
+      setCountdown(countdown === 0 ? 0 : countdown - 1);
+    }, 1000);
+    return () => clearTimeout(seconds);
+  }, [countdown]);
+
+  useEffect(() => {
+    const fetchListingsTimeout = setTimeout(async () => {
       setChecking(true);
       const response = await axios.get(
         `/api?query=${requestData["searchTerm"]}&location=${requestData["location"]}`
       );
-      setChecking(false);
       setListings(response.data ?? []);
+      setChecking(false);
     }, parseInt(parseFloat(requestData["refreshRate"]) * 60000));
-    return () => clearInterval(fetchListingsInterval);
+    return () => clearTimeout(fetchListingsTimeout);
   }, [requestData, listings]);
 
   useEffect(() => {
@@ -52,26 +69,38 @@ const ListingsView = ({ requestData, setListening }) => {
   return (
     <>
       <Layout>
-        <div className="flex justify-between items-center mb-8 p-8">
-          <table className="table-auto border-solid border-2">
-            <tbody>
-              {Object.keys(requestData).map((key) => (
-                <tr key={key}>
-                  <th className="p-2 pr-5 text-left">{key}</th>
-                  <td className="p-2">{requestData[key]}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {checking && <Spinner />}
-          <button
-            onClick={() => setListening(false)}
-            className="rounded-md p-3 text-white border-none bg-red-500 hover:bg-red-700 w-100"
-          >
-            Stop Listening
-          </button>
+        <div className="grid place-items-center p-5">
+          <div className="stats">
+            <div className="stat">
+              <div className="stat-title">Next refresh</div>
+              <span className="countdown font-mono text-6xl">
+                <span style={{ "--value": countdown }}></span>
+              </span>
+            </div>
+            <div className="stat">
+              <div className="stat-title">Search Term</div>
+              <div className="stat-value">{requestData["searchTerm"]}</div>
+            </div>
+            <div className="stat">
+              <div className="stat-title">Location</div>
+              <div className="stat-value">
+                {requestData["location"].charAt(0).toUpperCase() +
+                  requestData["location"].slice(1)}
+              </div>
+            </div>
+            <div className="stat">
+              <div className="stat-value">
+                <button
+                  onClick={() => setListening(false)}
+                  className="btn btn-warning"
+                >
+                  Stop Listening
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <table className="table-auto border-solid border-2 w-full">
+        <table className="table">
           <thead>
             <tr>
               {listings.length > 0 &&
@@ -94,14 +123,22 @@ const ListingsView = ({ requestData, setListening }) => {
                     case "link":
                       return;
                     case "image":
-                      return (
-                        <td className={tdStyles}>
+                      return checking ? (
+                        <td className="text-center">
+                          <div className="skeleton w-32 h-32 md:w-52 md:h-52 xl:w-64 xl:h-64 "></div>
+                        </td>
+                      ) : (
+                        <td className="text-center">
                           <img src={listing["image"]} alt="listing-image" />
                         </td>
                       );
                     case "title":
-                      return "link" in listing ? (
-                        <td className={tdStyles} key={i}>
+                      return checking ? (
+                        <td className="text-center">
+                          <div className="skeleton w-28 h-4 md:w-38 md:h-4 xl:w-64 xl:h-4"></div>
+                        </td>
+                      ) : "link" in listing ? (
+                        <td className="text-center" key={i}>
                           <a
                             className="text-blue-500"
                             href={listing["link"]}
@@ -112,11 +149,15 @@ const ListingsView = ({ requestData, setListening }) => {
                           </a>
                         </td>
                       ) : (
-                        <td className={tdStyles}>{listing[key]}</td>
+                        <td className="text-center">{listing[key]}</td>
                       );
                     default:
-                      return (
-                        <td className={tdStyles} key={i}>
+                      return checking ? (
+                        <td className="text-center">
+                          <div className="skeleton w-12 h-4 md:w-20 md:h-4 xl:w-34 xl:h-4"></div>
+                        </td>
+                      ) : (
+                        <td className="text-center" key={i}>
                           {listing[key]}
                         </td>
                       );

@@ -30,19 +30,28 @@ const ListenerForm = ({ setListening, setRequestData, requestData }) => {
       <h1 className="text-5xl text-center mb-10">
         Facebook Marketplace Listener
       </h1>
-      <form onSubmit={(e) => prepareRequest(e)}>
+      <form onSubmit={(e) => prepareRequest(e)} className="flex flex-col gap-4">
         <Input
           required={true}
           fieldName="search-term"
           state={searchTerm}
           setState={setSearchTerm}
         />
-        <Input
-          required={true}
-          fieldName="location"
-          state={location}
-          setState={setLocation}
-        />
+        <label>
+          Location
+          <select
+            id="location-select"
+            className="select select-bordered w-full"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+          >
+            <option disabled></option>
+            <option value="adelaide">Adelaide</option>
+            <option value="sydney">Sydney</option>
+            <option value="melbourne">Melbourne</option>
+            <option value="perth">Perth</option>
+          </select>
+        </label>
         <Input
           required={true}
           label="Every ? minutes"
@@ -53,7 +62,7 @@ const ListenerForm = ({ setListening, setRequestData, requestData }) => {
         />
         <button
           type="submit"
-          className="w-full rounded-md p-3 text-white border-none bg-blue-500 hover:bg-blue-700 w-100"
+          className="btn btn-primary text-white w-full mt-6"
         >
           Listen
         </button>

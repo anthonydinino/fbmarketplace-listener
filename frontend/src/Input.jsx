@@ -14,7 +14,7 @@ const Input = ({
       <input
         required={required ?? false}
         id={fieldName}
-        className="mb-5 w-full border-solid border-2 p-2"
+        className="input input-bordered w-full"
         placeholder={placeholder || `Enter ${fieldNameText}`}
         value={state}
         onChange={(e) => setState(e.target.value)}
