@@ -15,9 +15,9 @@ function App() {
           onClick={() => {
             setListeners([...listeners, Date.now().toString(36)]);
           }}
-          className="btn btn-circle bg-green-400 hover:bg-green-500 text-center mx-auto mb-3"
+          className="btn btn-accent text-white text-center mx-auto mb-3"
         >
-          +
+          Add Listener
         </button>
       </header>
       <Layout>
