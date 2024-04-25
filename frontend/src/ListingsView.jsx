@@ -71,6 +71,14 @@ const ListingsView = ({ requestData, setIsListening }) => {
               Stop Listening
             </button>
           </div>
+
+          <div className="stat-value">
+            {checking ? (
+              <span className="loading loading-bars loading-xs"></span>
+            ) : (
+              <div className="w-full h-10"></div>
+            )}
+          </div>
         </div>
       </div>
       <table className="table">
@@ -96,21 +104,13 @@ const ListingsView = ({ requestData, setIsListening }) => {
                   case "link":
                     return;
                   case "image":
-                    return checking ? (
-                      <td className="text-center">
-                        <div className="skeleton w-32 h-32 md:w-52 md:h-52 xl:w-64 xl:h-64 "></div>
-                      </td>
-                    ) : (
+                    return (
                       <td className="text-center">
                         <img src={listing["image"]} alt="listing-image" />
                       </td>
                     );
                   case "title":
-                    return checking ? (
-                      <td className="text-center">
-                        <div className="skeleton w-28 h-4 md:w-38 md:h-4 xl:w-64 xl:h-4"></div>
-                      </td>
-                    ) : "link" in listing ? (
+                    return "link" in listing ? (
                       <td className="text-center" key={i}>
                         <a
                           className="text-blue-500"
@@ -125,11 +125,7 @@ const ListingsView = ({ requestData, setIsListening }) => {
                       <td className="text-center">{listing[key]}</td>
                     );
                   default:
-                    return checking ? (
-                      <td className="text-center">
-                        <div className="skeleton w-12 h-4 md:w-20 md:h-4 xl:w-34 xl:h-4"></div>
-                      </td>
-                    ) : (
+                    return (
                       <td className="text-center" key={i}>
                         {listing[key]}
                       </td>
