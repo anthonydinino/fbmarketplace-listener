@@ -3,7 +3,7 @@ import Layout from "./Layout";
 import { useState } from "react";
 
 function App() {
-  const [listeners, setListeners] = useState([]);
+  const [listeners, setListeners] = useState(["default"]);
 
   return (
     <>
