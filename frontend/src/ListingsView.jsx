@@ -41,7 +41,7 @@ const ListingsView = ({ requestData, setListening }) => {
           return listing["id"] === id;
         });
         const time = moment().format("hh:mma Mo MMM YYYY ");
-        const message = `${newListing["title"]} has been listed at ${time}`;
+        const message = `${newListing["title"]} has been found at ${time}`;
         new Notification(message);
         console.log(message);
       }
