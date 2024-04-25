@@ -1,22 +1,44 @@
+import Listener from "./Listener";
+import Layout from "./Layout";
 import { useState } from "react";
-import ListenerForm from "./ListenerForm";
-import ListingsView from "./ListingsView";
 
 function App() {
-  const [listening, setListening] = useState(false);
-  const [requestData, setRequestData] = useState(null);
+  const [listeners, setListeners] = useState([]);
 
   return (
     <>
-      {listening ? (
-        <ListingsView requestData={requestData} setListening={setListening} />
-      ) : (
-        <ListenerForm
-          setListening={setListening}
-          setRequestData={setRequestData}
-          requestData={requestData}
-        />
-      )}
+      <header className="flex flex-col">
+        <h1 className="text-5xl text-center mb-3">
+          Facebook Marketplace Listener
+        </h1>
+        <button
+          onClick={() => {
+            setListeners([...listeners, Date.now().toString(36)]);
+          }}
+          className="btn btn-circle bg-green-400 hover:bg-green-500 text-center mx-auto mb-3"
+        >
+          +
+        </button>
+      </header>
+      <Layout>
+        {listeners.map((l) => {
+          return (
+            <div key={l} className="border-2 p-3 flex-grow">
+              <div className="flex justify-end">
+                <button
+                  onClick={() =>
+                    setListeners(listeners.filter((li) => li !== l))
+                  }
+                  className="btn btn-circle bg-red-400 hover:bg-red-500 text-white"
+                >
+                  x
+                </button>
+              </div>
+              <Listener />
+            </div>
+          );
+        })}
+      </Layout>
     </>
   );
 }
