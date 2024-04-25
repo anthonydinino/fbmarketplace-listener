@@ -7,9 +7,6 @@ const ListingsView = ({ requestData, setListening }) => {
   const [listings, setListings] = useState([]);
   const [trackedIds, setTrackedIds] = useState([]);
   const [checking, setChecking] = useState(false);
-  const [countdown, setCountdown] = useState(1);
-
-  const refreshSeconds = parseInt(parseFloat(requestData["refreshRate"]) * 60);
 
   useEffect(() => {
     const queryListings = async () => {
@@ -23,20 +20,6 @@ const ListingsView = ({ requestData, setListening }) => {
     queryListings();
     Notification.requestPermission();
   }, []);
-
-  useEffect(() => {
-    if (checking === false) {
-      setCountdown(refreshSeconds);
-    }
-  }, [checking, refreshSeconds]);
-
-  useEffect(() => {
-    const seconds = setTimeout(() => {
-      document.documentElement.style.setProperty("--value", countdown - 1);
-      setCountdown(countdown === 0 ? 0 : countdown - 1);
-    }, 1000);
-    return () => clearTimeout(seconds);
-  }, [countdown]);
 
   useEffect(() => {
     const fetchListingsTimeout = setTimeout(async () => {
@@ -71,12 +54,6 @@ const ListingsView = ({ requestData, setListening }) => {
       <Layout>
         <div className="grid place-items-center p-5">
           <div className="stats">
-            <div className="stat">
-              <div className="stat-title">Next refresh</div>
-              <span className="countdown font-mono text-6xl">
-                <span style={{ "--value": countdown }}></span>
-              </span>
-            </div>
             <div className="stat">
               <div className="stat-title">Search Term</div>
               <div className="stat-value">{requestData["searchTerm"]}</div>
