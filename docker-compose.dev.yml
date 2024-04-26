@@ -5,12 +5,10 @@ services:
       - ./dev.nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - 8080:80
-    container_name: fbmarket-proxy
     depends_on:
       - app
       - server
   app:
-    container_name: fbmarket-dev-app
     build:
       context: ./frontend
       dockerfile: dev.Dockerfile
@@ -18,7 +16,6 @@ services:
       - ./frontend:/usr/src/app
     command: ["npm", "run", "dev", "--", "--host"]
   server:
-    container_name: fbmarket-dev-server
     build: .
     ports:
       - 8000:8000
@@ -26,7 +23,6 @@ services:
       - ./:/usr/src/app
     command: ["flask", "run", "--debug", "--host", "0.0.0.0", "--port", "8000"]
   chrome:
-    container_name: fbmarket-chrome
     image: selenium/node-chrome:4.19.1-20240402
     shm_size: 2gb
     depends_on:
@@ -37,7 +33,6 @@ services:
       - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
       - SE_NODE_MAX_SESSIONS=12
   selenium-hub:
-    container_name: fbmarket-hub
     image: selenium/hub:4.19.1-20240402
     ports:
       - "4442:4442"

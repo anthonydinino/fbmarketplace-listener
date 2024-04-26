@@ -5,17 +5,14 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
       - 8080:80
-    container_name: fbmarket-proxy
     depends_on:
       - app
       - server
   app:
-    container_name: fbmarket-app
     build: ./frontend
     volumes:
       - ./frontend:/usr/src/app
   server:
-    container_name: fbmarket-server
     build: .
     ports:
       - 8000:8000
@@ -34,7 +31,6 @@ services:
       - SE_NODE_MAX_SESSIONS=12
   selenium-hub:
     image: selenium/hub:4.19.1-20240402
-    container_name: selenium-hub
     ports:
       - "4442:4442"
       - "4443:4443"
