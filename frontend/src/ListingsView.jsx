@@ -15,12 +15,13 @@ const ListingsView = ({ requestData, setIsListening, variance }) => {
     return addOrSub === 0 ? Math.abs(interval - variance) : interval + variance;
   };
 
+  const requestUrl = `/api?query=${requestData["searchTerm"]}&location=${requestData["location"]}`;
+
+  // First component render
   useEffect(() => {
     const queryListings = async () => {
       setChecking(true);
-      const response = await axios.get(
-        `/api?query=${requestData["searchTerm"]}&location=${requestData["location"]}`
-      );
+      const response = await axios.get(requestUrl);
       setListings(response.data ?? []);
       setChecking(false);
     };
@@ -32,18 +33,18 @@ const ListingsView = ({ requestData, setIsListening, variance }) => {
     }
   }, []);
 
+  // Every listener refresh
   useEffect(() => {
     const fetchListingsTimeout = setTimeout(async () => {
       setChecking(true);
-      const response = await axios.get(
-        `/api?query=${requestData["searchTerm"]}&location=${requestData["location"]}`
-      );
+      const response = await axios.get(requestUrl);
       setListings(response.data ?? []);
       setChecking(false);
     }, getRandomVarianceInterval(requestData["refreshRate"], variance));
     return () => clearTimeout(fetchListingsTimeout);
   }, [requestData, listings]);
 
+  // Every listener refresh check for new listings
   useEffect(() => {
     const newIds = listings.map((listing) => listing.id);
     newIds.forEach((newId) => {
