@@ -2,11 +2,18 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
 
-const ListingsView = ({ requestData, setIsListening }) => {
+const ListingsView = ({ requestData, setIsListening, variance }) => {
   const [listings, setListings] = useState([]);
   const [trackedIds, setTrackedIds] = useState([]);
   const [checking, setChecking] = useState(false);
   const [notifications, setNotifications] = useState(false);
+
+  const getRandomVarianceInterval = (refreshPerMin = 1, varianceValue) => {
+    const variance = Math.floor(Math.random() * varianceValue * 1000 + 1);
+    const addOrSub = Math.floor(Math.random() * 2);
+    const interval = parseInt(parseFloat(refreshPerMin) * 60000);
+    return addOrSub === 0 ? Math.abs(interval - variance) : interval + variance;
+  };
 
   useEffect(() => {
     const queryListings = async () => {
@@ -29,11 +36,11 @@ const ListingsView = ({ requestData, setIsListening }) => {
     const fetchListingsTimeout = setTimeout(async () => {
       setChecking(true);
       const response = await axios.get(
-        `/api?query=${requestData["searchTerm"]}`
+        `/api?query=${requestData["searchTerm"]}&location=${requestData["location"]}`
       );
       setListings(response.data ?? []);
       setChecking(false);
-    }, parseInt(parseFloat(requestData["refreshRate"]) * 60000));
+    }, getRandomVarianceInterval(requestData["refreshRate"], variance));
     return () => clearTimeout(fetchListingsTimeout);
   }, [requestData, listings]);
 

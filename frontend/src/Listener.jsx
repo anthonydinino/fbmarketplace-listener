@@ -2,7 +2,7 @@ import Input from "./Input";
 import { useEffect, useState } from "react";
 import ListingsView from "./ListingsView";
 
-const Listener = () => {
+const Listener = ({ variance }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [location, setLocation] = useState("");
   const [refreshRate, setRefreshRate] = useState("");
@@ -33,6 +33,7 @@ const Listener = () => {
         <ListingsView
           requestData={requestData}
           setIsListening={setIsListening}
+          variance={variance}
         />
       ) : (
         <form
