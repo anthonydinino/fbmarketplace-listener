@@ -6,6 +6,7 @@ const ListingsView = ({ requestData, setIsListening }) => {
   const [listings, setListings] = useState([]);
   const [trackedIds, setTrackedIds] = useState([]);
   const [checking, setChecking] = useState(false);
+  const [notifications, setNotifications] = useState(false);
 
   useEffect(() => {
     const queryListings = async () => {
@@ -17,14 +18,18 @@ const ListingsView = ({ requestData, setIsListening }) => {
       setChecking(false);
     };
     queryListings();
-    Notification.requestPermission();
+    if (!notifications) {
+      Notification.requestPermission().then((permission) => {
+        setNotifications(permission);
+      });
+    }
   }, []);
 
   useEffect(() => {
     const fetchListingsTimeout = setTimeout(async () => {
       setChecking(true);
       const response = await axios.get(
-        `/api?query=${requestData["searchTerm"]}&location=${requestData["location"]}`
+        `/api?query=${requestData["searchTerm"]}`
       );
       setListings(response.data ?? []);
       setChecking(false);
@@ -34,10 +39,10 @@ const ListingsView = ({ requestData, setIsListening }) => {
 
   useEffect(() => {
     const newIds = listings.map((listing) => listing.id);
-    newIds.forEach((id) => {
-      if (!trackedIds.includes(id)) {
+    newIds.forEach((newId) => {
+      if (trackedIds.length > 0 && !trackedIds.includes(newId)) {
         const newListing = listings.find((listing) => {
-          return listing["id"] === id;
+          return listing["id"] === newId;
         });
         const time = moment().format("hh:mma Mo MMM YYYY ");
         const message = `${newListing["title"]} has been found at ${time}`;
@@ -105,7 +110,7 @@ const ListingsView = ({ requestData, setIsListening }) => {
                     return;
                   case "image":
                     return (
-                      <td className="text-center">
+                      <td className="text-center" key={key}>
                         <img src={listing["image"]} alt="listing-image" />
                       </td>
                     );
@@ -122,7 +127,9 @@ const ListingsView = ({ requestData, setIsListening }) => {
                         </a>
                       </td>
                     ) : (
-                      <td className="text-center">{listing[key]}</td>
+                      <td className="text-center" key={key}>
+                        {listing[key]}
+                      </td>
                     );
                   default:
                     return (
