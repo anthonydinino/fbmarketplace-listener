@@ -10,6 +10,7 @@ services:
       - server
   app:
     build: ./frontend
+    container_name: fbmarket-scrape-app
     volumes:
       - ./frontend:/usr/src/app
   server:

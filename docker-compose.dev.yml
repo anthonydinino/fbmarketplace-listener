@@ -12,6 +12,7 @@ services:
     build:
       context: ./frontend
       dockerfile: dev.Dockerfile
+    container_name: fbmarket-scrape-dev-app
     volumes:
       - ./frontend:/usr/src/app
     command: ["npm", "run", "dev", "--", "--host"]
